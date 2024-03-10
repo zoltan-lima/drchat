@@ -1,0 +1,6 @@
+<ul>
+{% for patient in patients %}
+<li><a href="/patient/{{ patient.id }}">{{ patient.fname + ' ' + patient.lname}}</a></li>
+{% endfor %}
+</ul>
+<p>{{ patients|length }} results.</p>

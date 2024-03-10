@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- ! form that submits to /patients POST endpoint. -->
+    <form action="/patients" method="POST">
+        <label for="fname"> First Name:</label><br>
+        <input type="text" id="fname" name="fname" placeholder="First Name"><br>
+
+        <label for="lname">Last Name:</label><br>
+        <input type="text" id="lname" name="lname" placeholder="Last Name"><br>
+
+        <label for="dob">Date of Birth:</label><br>
+        <input type="date" id="dob" name="dob" placeholder="Date of Birth"><br>
+
+        <label for="gender">Gender:</label><br>
+        <select id="gender" name="gender">
+            <option value="">Select...</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select><br>
+
+        <label for="condition">Condition:</label><br>
+        <input type="text" id="condition" name="condition" placeholder="Summary of patient condition"><br>
+
+        <label for="treatment">Treatment:</label><br>
+        <input type="text" id="treatment" name="treatment" placeholder="Summary of treatment administered"><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
