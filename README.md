@@ -9,3 +9,7 @@ source venv/bin/active
 venv/scripts/activate.ps1
 ```
 Now you are ready to add code or run the application.
+```bash
+cd flask
+flask run --debug
+```

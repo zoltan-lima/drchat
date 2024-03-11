@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+</head>
+<body>
+    <form id="searchForm">
+        <input type="checkbox" id="searchByIdCheckbox" name="searchType" value="id">
+        <label for="searchByIdCheckbox">Search by ID</label><br>
+        
+        <input type="checkbox" id="searchByConditionCheckbox" name="searchType" value="condition">
+        <label for="searchByConditionCheckbox">Search by Condition</label><br>
+        
+        <input type="text" id="searchInput" name="searchInput" placeholder="">
+        
+        <input type="submit" value="Search">
+    </form>
+    <div id="results"></div>
+
+    <script>
+        const searchByIdCheckbox = document.getElementById('searchByIdCheckbox');
+        const searchByConditionCheckbox = document.getElementById('searchByConditionCheckbox');
+
+        searchByIdCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                searchByConditionCheckbox.checked = false;
+                document.getElementById('searchInput').setAttribute('placeholder', 'Enter ID');
+            }
+        });
+
+        searchByConditionCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                searchByIdCheckbox.checked = false;
+                document.getElementById('searchInput').setAttribute('placeholder', 'Enter Condition');
+            }
+        });
+
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const searchInput = document.getElementById('searchInput').value;
+            let endpoint = '';
+
+            if (document.getElementById('searchByIdCheckbox').checked) {
+                endpoint = '/search_by_id';
+            } else if (document.getElementById('searchByConditionCheckbox').checked) {
+                endpoint = '/search_by_condition';
+            } else {
+                alert('Please select a search option.');
+                return;
+            }
+
+            endpoint += `?${document.querySelector('input[name="searchType"]:checked').value}=${searchInput}`;
+
+            fetch(endpoint)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = '';
+                    if (data.error) {
+                        resultsDiv.textContent = data.error;
+                    } else {
+                        const ul = document.createElement('ul');
+                        data.forEach(item => {
+                            const li = document.createElement('li');
+                            const a = document.createElement('a');
+                            a.textContent = item['fname'] + ' ' + item['lname'];
+                            a.href = `/patient/${item['id']}`
+                            li.appendChild(a)
+                            ul.appendChild(li);
+                        });
+                        resultsDiv.appendChild(ul);
+                        const p = document.createElement('p');
+                        p.textContent = `${data.length} results`;
+                        resultsDiv.appendChild(p);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

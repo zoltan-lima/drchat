@@ -7,11 +7,16 @@
 </head>
 <body>
     <form id="updatePatient">
-        <label for="fname"> First Name:</label><br>
-        <input type="text" id="fname" name="fname" placeholder="First Name" value="{{ patient.fname }}"><br>
+        <input type="checkbox" id="anonymise" name="anonymise" value="anonymise">
+        <label for="anonymise">Anonymise</label><br>
 
-        <label for="lname">Last Name:</label><br>
-        <input type="text" id="lname" name="lname" placeholder="Last Name" value="{{ patient.lname }}"><br>
+        <div id="name">
+            <label for="fname"> First Name:</label><br>
+            <input type="text" id="fname" name="fname" placeholder="First Name" value="{{ patient.fname }}"><br>
+
+            <label for="lname">Last Name:</label><br>
+            <input type="text" id="lname" name="lname" placeholder="Last Name" value="{{ patient.lname }}"><br>
+        </div>
 
         <label for="dob">Date of Birth:</label><br>
         <input type="date" id="dob" name="dob" placeholder="Date of Birth" value="{{ patient.dob }}"><br>
@@ -38,6 +43,17 @@
     </form>
 </body>
 <script>
+document.getElementById('anonymise').addEventListener('change', function() {
+    const nameFields = document.getElementById('name');
+    if (this.checked) {
+        nameFields.style.display = 'none';
+        document.title = '{{ patient.id }}';
+    } else {
+        nameFields.style.display = 'block';
+        document.title = '{{ patient.fname + ' ' + patient.lname }}';
+    }
+});
+
 document.getElementById('updatePatient').addEventListener('submit', function(event) {
     event.preventDefault();
 

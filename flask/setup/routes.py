@@ -59,14 +59,14 @@ def update_patient(ID):
 	print(ID)
 	data = request.form
 	print(data)
-	if not data: return jsonify({"error": "No data received."}, 400)
+	if not data: return jsonify({"error": "No data received."}), 400
 
 	patient = database.Patient.query.get(ID)
 	if not patient:
 		return jsonify({'error': 'Patient not found'}), 404
 	
-	patient.fname = data['fname']
-	patient.lname = data['lname']
+	if data['fname']: patient.fname = data['fname']
+	if data['lname']: patient.lname = data['lname']
 	patient.dob = datetime.strptime(data['dob'], '%Y-%m-%d').date()
 	patient.gender = data['gender']
 	patient.condition = data['condition']
@@ -77,3 +77,29 @@ def update_patient(ID):
 		return jsonify({'message': 'Patient data updated successfully'})
 	except Exception as e:
 		return jsonify({'error': str(e)}), 500
+	
+@app.route('/search', methods=['GET'])
+def search():
+	return send_from_directory('static', 'search.html')
+
+@app.route('/search_by_id', methods=['GET'])
+def search_by_id():
+	data = request.args.get('id')
+	if not data: return jsonify({"error": "No data received."}), 400
+	
+	patient = database.Patient.query.get(data)
+	
+	if not patient:
+		return jsonify({'error': 'Patient not found'}), 404
+	else: return jsonify([patient.serialize()]), 200
+	
+@app.route('/search_by_condition', methods=['GET'])
+def search_by_condition():
+	data = request.args.get('condition')
+	if not data: return jsonify({"error": "No data received."}), 400
+	
+	patients = database.Patient.query.filter_by(condition=data).all()
+	
+	if not patients:
+		return jsonify({'error': 'Patient not found'}), 404
+	else: return jsonify([patient.serialize() for patient in patients]), 200
