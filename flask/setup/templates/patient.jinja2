@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ patient.fname + ' ' + patient.lname }}</title>
+</head>
+<body>
+    <form id="updatePatient">
+        <label for="fname"> First Name:</label><br>
+        <input type="text" id="fname" name="fname" placeholder="First Name" value="{{ patient.fname }}"><br>
+
+        <label for="lname">Last Name:</label><br>
+        <input type="text" id="lname" name="lname" placeholder="Last Name" value="{{ patient.lname }}"><br>
+
+        <label for="dob">Date of Birth:</label><br>
+        <input type="date" id="dob" name="dob" placeholder="Date of Birth" value="{{ patient.dob }}"><br>
+
+        <label for="gender">Gender:</label><br>
+        <select id="gender" name="gender">
+            <option value="">Select...</option>
+            {% for value in ['Male', 'Female', 'Other'] %}
+                {% if value == patient.gender %}
+                <option value="{{ value }}" selected>{{ value }}</option>
+                {% else %}
+                <option value="{{ value }}">{{ value }}</option>
+                {% endif %}
+            {% endfor %}
+        </select><br>
+
+        <label for="condition">Condition:</label><br>
+        <input type="text" id="condition" name="condition" placeholder="Summary of patient condition" value="{{ patient.condition }}"><br>
+
+        <label for="treatment">Treatment:</label><br>
+        <input type="text" id="treatment" name="treatment" placeholder="Summary of treatment administered" value="{{ patient.treatment }}"><br>
+
+        <input type="submit" value="Update">
+    </form>
+</body>
+<script>
+document.getElementById('updatePatient').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const ID = '{{ patient.id }}'; // Replace with actual patient ID
+    const url = '/patient/' + ID;
+    const formData = new FormData(event.target);
+
+    fetch(url, {
+        method: 'PUT',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+});
+</script>
+</html>

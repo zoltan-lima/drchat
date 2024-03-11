@@ -23,7 +23,6 @@ def get_patients():
 def add_patient():
 	# Extract patient data from request
 	patient_data = request.form
-	print(patient_data)
 	
     # Validate request body
 	if not patient_data:
@@ -52,28 +51,29 @@ def get_patient(ID):
 	patient = database.Patient.query.get(ID)
 	if not patient:
 		return jsonify({'error': 'Patient not found'}), 404
-	return jsonify(patient.serialize()), 200
+	
+	return render_template('patient.jinja2', patient=patient.serialize())
 
 @app.route('/patient/<ID>', methods=['PUT'])
 def update_patient(ID):
 	print(ID)
+	data = request.form
+	print(data)
+	if not data: return jsonify({"error": "No data received."}, 400)
+
 	patient = database.Patient.query.get(ID)
 	if not patient:
 		return jsonify({'error': 'Patient not found'}), 404
-		
-	data = request.json
-	patient_data = {
-		'fname': patient.fname,
-		'lname': patient.lname,
-		'dob': patient.dob,
-		'gender': patient.gender,
-		'condition': patient.condition,
-		'treatment': patient.treatment
-    }
 	
-	for field in ['fname', 'lname', 'dob', 'gender', 'condition', 'treatment']:
-		if field in data:
-			patient_data[field] = data[field]
+	patient.fname = data['fname']
+	patient.lname = data['lname']
+	patient.dob = datetime.strptime(data['dob'], '%Y-%m-%d').date()
+	patient.gender = data['gender']
+	patient.condition = data['condition']
+	patient.treatment = data['treatment']
 	
-	database.db.session.commit() # TODO: try and catch error on commit as the data may be formatted incorrectly.
-	return jsonify({'message': 'Patient data updated successfully'})
+	try:
+		database.db.session.commit()
+		return jsonify({'message': 'Patient data updated successfully'})
+	except Exception as e:
+		return jsonify({'error': str(e)}), 500
